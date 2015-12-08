@@ -95,25 +95,22 @@
         var svg = d3.select("body").append("svg").attr(styles.svg);
 
         var frame = chartFrame()
-                        .title('Education &amp; Pay')
-                        .subtitle('country rank')
-                        .source('forumchart.xls')
-                        .height(styles.svg.height)
-                        .width(styles.svg.width);
+                        .title( 'Education &amp; Pay' )
+                        .subtitle( 'country rank' )
+                        .source( 'forumchart.xls' )
+                        .height( styles.svg.height )
+                        .width( styles.svg.width );
 
         svg.call(frame);
         
         //axis
-        svg.append("g").attr("class","axis")
-            .attr("transform",function(){
-                return "translate("+xOffset+","+yOffset+")";  
-            }).call(yAxis);
+        var plot = d3.select('.chart-plot');
+
+        plot.append('g').attr('class','axis')
+            .call(yAxis);
         
         //create graph
-        var graph = svg.append("g").attr("id","slope")
-            .attr("transform",function(){
-                return "translate("+xOffset+","+yOffset+")";  
-            });
+        var graph = plot.append('g').attr('id','slope');
         
         var slopes = graph.selectAll("g").data(data).enter().append("g").attr("id",function(d){return d.name})
         
@@ -180,7 +177,7 @@
         //titles
         
         //apply the styles as attributes
-        d3.selectAll('*').attr('style','');
+        d3.selectAll('*').attr('style', null);
         Object.keys(styles).forEach(function(selector){
             d3.selectAll(selector)
                 .attr(styles[selector]);
