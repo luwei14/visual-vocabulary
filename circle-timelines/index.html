@@ -66,9 +66,13 @@ var dataLocation2 = 'wynnCleaned.csv';
 var dataLocation3 = 'comcastCleaned.csv';
 var dataLocation4 = 'freeportCleaned.csv';
 var dataLocation5 = 'expediaCleaned.csv';
-var title='International Piracy and Armed Robbery at Sea';
-var subtitle='incidents by region, 1984-2010';
-var source='Source: International Maritime Organisation';
+var dataLocation6 = 'fordCleaned.csv';
+var dataLocation7 = 'davitaCleaned.csv';
+var dataLocation8 = 'boeingCleaned.csv';
+var dataLocation9 = 'constellationCleaned.csv';
+var title='Personal use of corporate aircraft';
+var subtitle='value of perquisite ($)';
+var source='Source: Securities and Exchanges Commission';
 var colours=['#4479b8','#ea9942','#454545','#87b700','#a765a6','#8f7666','#aa0016'];
 
 //general layout information
@@ -91,6 +95,11 @@ d3.csv(dataLocation2, drawChart);
 d3.csv(dataLocation3, drawChart);
 d3.csv(dataLocation4, drawChart);
 d3.csv(dataLocation5, drawChart);
+d3.csv(dataLocation6, drawChart);
+d3.csv(dataLocation7, drawChart);
+d3.csv(dataLocation8, drawChart);
+d3.csv(dataLocation9, drawChart);
+
 function drawChart(error, data) {
     //set up an array of all the dates and values which we need to work out the range of the data
     var dates = new Array();
@@ -111,7 +120,9 @@ function drawChart(error, data) {
     
     //establish max data value
     values = values.sort(sortFunction);
-    var maxValue=values[values.length-1];
+    // var maxValue=values[values.length-1];
+    var maxValue=1654089;
+
     
     //establish proportional sizes
     var radius = d3.scale.sqrt()
