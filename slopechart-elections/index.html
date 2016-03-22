@@ -24,7 +24,7 @@
     }
 
     .CDU{
-
+        stroke:#F00;
     }
     .SPD{
 
@@ -89,13 +89,14 @@
 </script>
 
 <script type="text/javascript">
+//TODO: add ability to set color appart from as a class (cf nested selections)
     function slopeChart(){
         var yScale = d3.scaleLinear();
         var xScale = d3.scalePoint();
         var dotRadius = 5;
         var leftLabel = function(){ return ''; };
         var rightLabel = function(){ return ''; };
-        var classer = function(){ return '' }
+        var classer = function(){ return 'slope' }
 
         function chart(parent, data){
             parent.selectAll('g')
@@ -222,9 +223,10 @@
 </script>
 <script>
 
-    d3.csv("test2.csv", function(error, data) {
+    var dataFile = 'test2.csv'; 
+    var columns = ['2011', '2016', '2021'];
 
-        var columns = ['2011', '2016', '2021'];
+    d3.csv(dataFile, function(error, data) {
 
         var frame = d3_chartframe.frame()
                         .title("Saxony-Anhalt state election, 2016")
@@ -247,15 +249,15 @@
                         .range([frame.dimension().height, 0]);
         
         var slopes = slopeChart()
-                        .leftLabel(function(d){ return d[columns[0]]; })
+                        .leftLabel(function(d){ 
+                            if(!d[columns[0]]) return '';
+                            return d[columns[0]] + '%'; 
+                        })
                         .rightLabel(function(d){ return d[columns[1]] + ' ' + d.party; })
                         .classer(function(d){ return 'slope ' + d.party; })
                         .dotRadius(10)
                         .xScale(xScale)
                         .yScale(yScale);
-
-        // console.log(xScale.range())
-        // console.log(yScale.domain())
 
         d3.select('svg.chart')
             .call( frame );
