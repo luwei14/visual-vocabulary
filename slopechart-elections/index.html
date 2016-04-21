@@ -4,25 +4,6 @@
     <title>Slopechart</title>
     <style type="text/css">
 
-    .chart-title{
-        font-family: sans-serif;
-        font-size:25px;
-    }
-
-    .chart-subtitle{
-        font-family: sans-serif;
-        font-size:15px;
-    }
-
-    .slope{
-        stroke:#666;
-        fill:#FFF;
-    }
-
-    .slope circle{
-        stroke:#FFF;
-    }
-
     .CDU{
         stroke:#F00;
     }
@@ -40,6 +21,31 @@
     }
     .AfD{
         stroke:#F00;
+    }
+
+    .web .chart-title{
+        font-family: sans-serif;
+        font-size:25px;
+    }
+
+    .web .chart-subtitle{
+        font-family: sans-serif;
+        font-size:15px;
+    }
+
+    .web .slope{
+        stroke:#666;
+        fill:#FFF;
+    }
+
+    .web .slope circle{
+        stroke:#FFF;
+    }
+
+
+    .web .label{
+        font-family: sans-serif;
+        font-size: 10px;
     }
 
     .label{
@@ -61,18 +67,24 @@
         text-anchor:end;
     }
 
-    .label{
-        font-family: sans-serif;
-        font-size: 10px;
+    .print .slope{
+        stroke:#666;
+        fill:#FFF;
+        stroke-width:3;
+    }
+
+    .print .slope circle{
+        stroke:#FFF;
     }
 
     </style>
     <script src="//d3js.org/d3.v4.0.0-alpha.24.min.js" charset="utf-8"></script>
-<script src="chartframe.min.js" charset="utf-8">
-</script>
+    <script src="chartframe.min.js" charset="utf-8"></script>
+    <script src="slope.js" chartset="utf-8"></script>
 </head>
 <body>
-<svg class="chart"></svg>
+<svg class="web chart"></svg>
+<svg class="print chart"></svg>
 </body>
 
 <script type="text/javascript">
@@ -86,140 +98,27 @@
         })
         return extent;
     }
+
+    function getScales(frame ,xDomain, yDomain){
+        console.log(frame.dimension())
+        var xScale = d3.scalePoint()
+            .domain(xDomain)
+            .range([0, frame.dimension().width]);
+
+        var yScale = d3.scaleLinear()
+            .domain(yDomain)
+            .range([frame.dimension().height, 0]);
+
+        return {
+            x: xScale,
+            y: yScale
+        };
+    }
 </script>
 
 <script type="text/javascript">
 //TODO: add ability to set color appart from as a class (cf nested selections)
-    function slopeChart(){
-        var yScale = d3.scaleLinear();
-        var xScale = d3.scalePoint();
-        var dotRadius = 5;
-        var leftLabel = function(){ return ''; };
-        var rightLabel = function(){ return ''; };
-        var classer = function(){ return 'slope' }
 
-        function chart(parent, data){
-            parent.selectAll('g')
-                    .data(data)
-                .enter()
-                    .append('g')
-                    .attr('class',classer)
-                    .each(function(datum){
-                        var group = d3.select(this);
-
-                        //lines
-                        var lineSegments = xScale.domain().reduce(function(previousValue, currentValue, currentIndex, array){
-                            if(currentIndex>0){
-                                previousValue.push({
-                                    start:array[currentIndex-1],
-                                    end:currentValue
-                                });
-                            }
-                            return previousValue;
-                        }, []);
-
-                        group.selectAll('line')
-                            .data(lineSegments)
-                                .enter()
-                            .append('line')
-                                .attr('x1', function(d){
-                                    return xScale(d.start);
-                                })
-                                .attr('x2', function(d){
-                                    return xScale(d.end);
-                                })
-                                .attr('y1', function(d){
-                                    return yScale(datum[d.start]);
-                                })
-                                .attr('y2', function(d){
-                                    return yScale(datum[d.end]);
-                                });
-                        //dots
-                        if(dotRadius > 0){
-                            group.selectAll('circle')
-                                .data(xScale.domain())
-                                    .enter()
-                                 .append('circle')
-                                    .attr('r',dotRadius)
-                                    .attr('cx',function(d){
-                                        return xScale(d)
-                                    })
-                                    .attr('cy',function(d){
-                                        return yScale(datum[d])
-                                    });
-                        }
-                        //labels
-                        group.selectAll('text')
-                            .data(xScale.domain())
-                                .enter()
-                            .append('text')
-                                .attr('class',function(d, i){
-                                    if(i==0){
-                                        return 'start label';
-                                    }
-                                    if(i==xScale.domain().length-1){
-                                        return 'end label';
-                                    }
-                                    return 'label';
-                                })
-                                .attr('x',function(d){
-                                    return xScale(d);
-                                })
-                                .attr('y',function(d){
-                                    return yScale(datum[d]);
-                                })
-                                .text(function(d,i){
-                                    if(i == 0) return leftLabel(datum);
-                                    if(i == xScale.domain().length-1) return rightLabel(datum);
-                                    return datum[d];
-                                })
-//                        console.log(datum);
-                    })
-        }
-
-        chart.classer = function(accessor){
-            classer = accessor;
-            return chart;
-        }
-
-        chart.dotRadius = function(r){
-            if(isNaN(r)) return dotRadius;
-            dotRadius = r;
-            return chart;
-        }
-
-        chart.xScale = function(scale){
-            if(!scale) return xScale;
-            xScale = scale;
-            return chart;
-        }
-
-        chart.yScale = function(scale){
-            if(!scale) return yScale;
-            yScale = scale;
-            return chart;
-        }
-
-        chart.leftLabel = function(accessor){
-            if(!accessor) return leftLabel;
-            leftLabel = accessor;
-            return chart;
-        }
-
-        chart.rightLabel = function(accessor){
-            if(!accessor) return rightLabel;
-            rightLabel = accessor;
-            return chart;
-        }
-
-        chart.slopeColour = function(accessor){
-            if(!accessor) return slopeColour;
-            slopeColour = accessor;
-            return chart;
-        }
-
-        return chart;
-    }
 </script>
 <script>
 
@@ -227,26 +126,30 @@
     var columns = ['2011', '2016', '2021'];
 
     d3.csv(dataFile, function(error, data) {
+        var webframe = d3_chartframe.frame()
+                .title("Saxony-Anhalt state election, 2016")
+                .subtitle("Vote by party vs 2011")
+                .source("Source: Spiegel.de")
+                .margin({top:90, left:60, bottom:60, right:70});
 
-        var frame = d3_chartframe.frame()
-                        .title("Saxony-Anhalt state election, 2016")
-                        .subtitle("Vote by party vs 2011")
-                        .source("Source: Spiegel.de")
-                        .margin({top:90, left:60, bottom:60, right:70});
+        var printframe = d3_chartframe.frame()
+                .width(300)
+                .title("Saxony-Anhalt state election, 2016")
+                .subtitle("Vote by party vs 2011")
+                .source("Source: Spiegel.de")
+                .margin({top:90, left:60, bottom:60, right:70});
 
-        var xScale = d3.scalePoint()
-                        .domain(columns)
-                        .range([0, frame.dimension().width]);
+        var xDomain = columns;
+        var yDomain = multiExtent(data, function(d){
+            var elements = [];
+            columns.forEach(function(key){
+                elements.push(d[key]);
+            });
+            return elements;
+        });
 
-        var yScale = d3.scaleLinear()
-                        .domain(multiExtent(data, function(d){
-                            var elements = [];
-                            xScale.domain().forEach(function(key){
-                                elements.push(d[key]);
-                            });
-                            return elements;
-                        }))
-                        .range([frame.dimension().height, 0]);
+        var webScales = getScales(webframe, xDomain, yDomain);
+        var printScales = getScales(printframe, xDomain, yDomain);
         
         var slopes = slopeChart()
                         .leftLabel(function(d){ 
@@ -256,14 +159,27 @@
                         .rightLabel(function(d){ return d[columns[1]] + ' ' + d.party; })
                         .classer(function(d){ return 'slope ' + d.party; })
                         .dotRadius(10)
-                        .xScale(xScale)
-                        .yScale(yScale);
+                        .xScale(webScales.x)
+                        .yScale(webScales.y);
 
-        d3.select('svg.chart')
-            .call( frame );
+        d3.select('svg.web')
+            .call( webframe );
 
-        d3.select('svg.chart .chart-plot')
+        d3.select('svg.web .chart-plot')
             .call( slopes, data );
+
+        slopes
+            .xScale(printScales.x)
+            .yScale(printScales.y);        
+
+
+        d3.select('svg.print')
+            .call( printframe );
+
+        d3.select('svg.print .chart-plot')
+            .call( slopes, data );
+
+
 
 });
 
