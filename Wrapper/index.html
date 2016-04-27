@@ -8,9 +8,13 @@
         text{font-family:metric}
     </style>
     <script src="d3.min.js"></script>
+    <script src="saveSvgAsPng.js"></script>
     <script src="drawFrame.js"></script>
     <script src="line.js"></script>
     <script>
+        
+        /*d3.select("body").append("button").text("png").on("click",function(){
+                      saveSvgAsPng(document.getElementById("chart"), "diagram.png", {backgroundColor: "#fff1e0"});    */
         
         //datafile
         var dataURL = "2lines.csv"
@@ -70,7 +74,28 @@
             if (subtitle){
                 frame.subtitle(subtitle)
             }
+           
+            //call the frame...
             d3.select("body").call(frame)
+            
+            //...then add a save as png button for each created frame
+            d3.select("body").append("button").attr("data-type",media).text("save png: "+media).on("click",function(){
+                //find out media type
+                var media = d3.select(this).attr("data-type")
+                var options = {}
+                
+                //put in a pink background like this
+                /*
+                if (media=="web"){
+                    options.backgroundColor="#fff1e0";
+                }
+                */
+                
+                saveSvgAsPng(document.getElementById(media+"chart"),media+"_chart.png", options);
+                
+            })
+            
+            
             //drawFrame
 
         }
