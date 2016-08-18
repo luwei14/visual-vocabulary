@@ -1,0 +1,63 @@
+# Site configuration
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
+
+port: 4444
+
+#FT anlaytics settings
+ua: "35229645-1" #google analytics. default is 35229645-1
+ij: "s" # set this to "p" for production or "s" for staging
+microsite: "Interactive"
+uuid: 
+
+# Build settings
+markdown: kramdown
+
+# Site settings
+title: Visual Vocabulary
+email: interactive@ft.com
+description: "Teaching the grammar of graphics at the Financial Times"
+baseurl: #"/sites" # the subpath of your site, e.g. /blog
+url: #"https://ig.ft.com" # the base hostname & protocol for your site
+twitter_username: ftdata
+github_username: ft-interactive
+
+#FT Origami settings
+
+#default social media settings
+author: FT Interactive News team
+fbid: "429755910551755"
+fbpage: "8860325749"
+ogtitle: "Visual Vocabulary" #delete line to default to title tag
+ogtype: article
+ogimg: "http://www.ft.com/path/to/default/picture/image.png" #image for facebook
+ogdesc: "This is the og description for Facebook" #delete to default to page description
+twitterCard: "summary_large_image"
+twitterSite: "FTdata"
+
+#test vars
+comments-uuid: "3a499586-b2e0-11e4-a058-00144feab7de"
+
+#images
+favicon: "https://ig.ft.com/favicon.ico"
+apple-touch-icon: "//im.ft-static.com/m/icons/apple-touch-icon.png"
+socialimage: http://www.ft.com/path/to/default/picture/socialmediaimage.png #URL of default social media image
+
+#origami
+o-stylesheet: "https://h2.ft.com/build/v2/bundles/css?modules=o-footer@^4,o-fonts@^2,o-grid@^4"
+
+#collections
+collections:
+  viz:
+    output: true
+    permalink: /viz/:path/
+
+defaults:
+  - scope:
+      path: ""
+      type: viz
+    values:
+      layout: page
